@@ -6,6 +6,20 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {Vibration} from 'react-native'
 
 const func = () => Vibration.vibrate([1000, 1000 , 1000, 1000, 1000 ,1000])
+const TimeCalc = ({ time }) => {
+  const formatTime = (time) => {
+    const hours = Math.floor(time / 3600).toString().padStart(2, '0');
+    const minutes = Math.floor((time % 3600) / 60).toString().padStart(2, '0');
+    const seconds = (time % 60).toString().padStart(2, '0');
+    return (
+      <Text style={styles.timerText}>
+        {hours}:{minutes}
+        <Text style={styles.millisecondsText}>{seconds}</Text>
+      </Text>
+    );
+  };
+return <Text style={styles.text}>{formatTime(time)}</Text>;
+};
 const defaultPOM = '1500'
 const defaultBreak = '300'
 
@@ -107,11 +121,7 @@ export default function Pomodoro ({pomodoroEnable}) {
       });
 
     const handleTimeConfirm = (selectedTime) => {
-        const selectedMinutes = selectedTime.getHours();
-        const selectedSeconds = selectedTime.getMinutes();
-        const selectedTotalSeconds = selectedMinutes * 60 + selectedSeconds;
-        console.log(selectedMinutes)
-        console.log(selectedSeconds)
+        const selectedTotalSeconds = selectedTime.getHours() * 3600 + selectedTime.getMinutes() * 60;
         if(Toggle)
         setpomodoroTimer(selectedTotalSeconds);
         else
@@ -153,7 +163,8 @@ export default function Pomodoro ({pomodoroEnable}) {
                     <Button style = {[styles.Buttons, {backgroundColor: Toggle ? '#933a3e' : 'transparent'}]} title = 'Pomodoro' disableElevation onPress={handleTogglePOM}></Button>
                     <Button style = {[styles.Buttons, {backgroundColor: !Toggle ? '#933a3e' : 'transparent'}]} title= 'Break' disableElevation onPress={handleToggleBRK}></Button>
                     </View>
-                    <Text style={styles.timerText}>{formatTime(Toggle ? pomodoroTimer: breakTimer)}</Text>
+                    {/* <Text style={styles.timerText}>{formatTime(Toggle ? pomodoroTimer: breakTimer)}</Text> */}
+                    <TimeCalc time={Toggle ? pomodoroTimer: breakTimer}/>
                     <View style={styles.iconContainer}>
                      <TouchableOpacity  onPress={()=>{
                         setTimePickerVisibility(true);
@@ -217,5 +228,19 @@ const styles = StyleSheet.create({
         right: 16,
         zIndex: 1,
       },
-
+      timerText: {
+        fontSize: 48,
+        fontWeight: 'bold',
+        color: 'white',
+      },
+      millisecondsText: {
+        color: '#fff',
+        fontSize: 20,
+        fontWeight: '100',
+      },
+      text: {
+        color: '#fff',
+        fontSize: 40,
+        fontWeight: '300',
+      },
 });
