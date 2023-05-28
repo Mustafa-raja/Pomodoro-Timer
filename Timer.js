@@ -5,6 +5,20 @@ import { AntDesign } from '@expo/vector-icons';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {Vibration} from 'react-native'
 
+const TimeCalc = ({ time }) => {
+const formatTime = (time) => {
+  const hours = Math.floor(time / 3600).toString().padStart(2, '0');
+  const minutes = Math.floor((time % 3600) / 60).toString().padStart(2, '0');
+  const seconds = (time % 60).toString().padStart(2, '0');
+  return (
+    <Text style={styles.timerText}>
+      {hours}:{minutes}
+      <Text style={styles.millisecondsText}>{seconds}</Text>
+    </Text>
+  );
+};
+return <Text style={styles.text}>{formatTime(time)}</Text>;
+};
 
 export default function Timer({ timerEnable }) {
   const [time, setTime] = useState(1500); // 25 minutes in seconds
@@ -35,11 +49,7 @@ export default function Timer({ timerEnable }) {
     return () => clearInterval(interval);
   }, [timerEnable, isPaused, time]);
 
-  const formatTime = (time) => {
-    const minutes = Math.floor(time / 60).toString().padStart(2, '0');
-    const seconds = (time % 60).toString().padStart(2, '0');
-    return `${minutes}:${seconds}`;
-  };
+ 
 
   const handlePause = () => {
     setIsPaused((prevPaused) => !prevPaused);
@@ -67,11 +77,11 @@ export default function Timer({ timerEnable }) {
     );
   });
   const handleTimeConfirm = (selectedTime) => {
-    const selectedMinutes = selectedTime.getHours();
-    const selectedSeconds = selectedTime.getMinutes();
-    const selectedTotalSeconds = selectedMinutes * 60 + selectedSeconds;
-    console.log(selectedMinutes)
-    console.log(selectedSeconds)
+    const selectedHours = selectedTime.getHours().toString().padStart(2, '0');
+  const selectedMinutes = selectedTime.getMinutes().toString().padStart(2, '0');
+  const selectedTotalSeconds = selectedTime.getHours() * 3600 + selectedTime.getMinutes() * 60;
+    // console.log(selectedMinutes)
+    // console.log(selectedSeconds)
     setTime(selectedTotalSeconds);
     setTimePickerVisibility(false);
   };
@@ -106,7 +116,8 @@ export default function Timer({ timerEnable }) {
                <AntDesign name="edit" size={24} color="white" />
             </View>
         </TouchableOpacity>
-        <Text style={styles.timerText}>{formatTime(time)}</Text>
+        <TimeCalc time={time}/>
+        {/* <Text style={styles.timerText}>{formatTime(time)}</Text> */}
       </View>
       <View>
         <TimerButtons handleReset={setTime} handlePause={handlePause} isPaused={isPaused} />
@@ -154,5 +165,20 @@ const styles = StyleSheet.create({
     top: 16,
     right: 16,
     zIndex: 1,
+  },
+  timerText: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  millisecondsText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: '100',
+  },
+  text: {
+    color: '#fff',
+    fontSize: 40,
+    fontWeight: '300',
   },
 });
